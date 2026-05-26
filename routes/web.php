@@ -1,111 +1,97 @@
 <?php
- 
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PerpustakaanController;
- 
-// Route default
-Route::get('/', function () {
-    return view('welcome');
-});
- 
-// Route baru - return text
-Route::get('/hello', function () {
-    return 'Hello dari Laravel!';
-});
- 
-// Route dengan HTML
-Route::get('/info', function () {
-    return '<h1>Sistem Perpustakaan</h1><p>Selamat datang!</p>';
-});
- 
-// Route dengan JSON
-Route::get('/buku', function () {
-    return [
-        'judul' => 'Laravel Programming',
-        'pengarang' => 'John Doe',
-        'harga' => 150000
-    ];
-});
+use App\Models\Buku;
+use App\Models\Anggota;
 
-// Route dengan parameter required
-Route::get('/buku/{id}', function ($id) {
-    return "Detail buku dengan ID : " . $id;
+Route::get('/test-accessor-scope', function () {
+
+    $html = '
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <div class="container mt-4">
+        <h1>Testing Accessor & Scope</h1>
+    ';
+
+    // =========================
+    // ACCESSOR BUKU
+    // =========================
+    $html .= '<h3 class="mt-4">Status Stok Buku</h3>';
+
+    $bukus = Buku::all();
+
+    foreach ($bukus as $buku) {
+
+        $html .= '
+        <div class="mb-3">
+            <strong>' . $buku->judul . '</strong><br>
+            Status: ' . $buku->status_stok_badge . '<br>
+            Tahun: ' . $buku->tahun_label . '
+        </div>
+        ';
+    }
+
+    // =========================
+    // BUKU TERBARU
+    // =========================
+    $html .= '<h3 class="mt-4">Buku Terbaru</h3>';
+
+    $terbaru = Buku::terbaru()->get();
+
+    foreach ($terbaru as $buku) {
+
+        $html .= '
+        <p>' . $buku->judul . ' (' . $buku->tahun_terbit . ')</p>
+        ';
+    }
+
+    // =========================
+    // STOK MENIPIS
+    // =========================
+    $html .= '<h3 class="mt-4">Buku Stok Menipis</h3>';
+
+    $menipis = Buku::stokMenipis()->get();
+
+    foreach ($menipis as $buku) {
+
+        $html .= '
+        <p>' . $buku->judul . ' - Stok: ' . $buku->stok . '</p>
+        ';
+    }
+
+    // =========================
+    // ACCESSOR ANGGOTA
+    // =========================
+    $html .= '<h3 class="mt-4">Status Anggota</h3>';
+
+    $anggota = Anggota::all();
+
+    foreach ($anggota as $a) {
+
+        $html .= '
+        <div class="mb-3">
+            <strong>' . $a->nama . '</strong><br>
+            Status: ' . $a->status_badge . '<br>
+            Kategori Usia: ' . $a->kategori_usia . '
+        </div>
+        ';
+    }
+
+    // =========================
+    // BULAN INI
+    // =========================
+    $html .= '<h3 class="mt-4">Anggota Terdaftar Bulan Ini</h3>';
+
+    $bulanIni = Anggota::terdaftarBulanIni()->get();
+
+    foreach ($bulanIni as $a) {
+
+        $html .= '
+        <p>' . $a->nama . '</p>
+        ';
+    }
+
+    $html .= '</div>';
+
+    return $html;
 });
-
-// Route dengan parameter optional
-Route::get('/kategori/{nama?}', function ($nama = 'Semua Kategori') {
-    return "Menampilkan kategori : " . $nama;
-});
-
-// Route dengan multiple parameter
-Route::get('/search/{kategori}/{keyword}', function ($kategori, $keyword) {
-    return "Cari buku kategori : $kategori dengan keyword : $keyword";
-});
-
-//  Named Route
-Route::get('/perpustakaan', function () {
-    return 'Halaman Perpustakaan';
-})->name('perpus.home');
-
-// Gunakan Named Route
-Route::get('/test-route', function () {
-    $url = route('perpus.home');
-    return "URL untuk halaman perpustakaan adalah : " . $url;
-});
-
-// PRAKTIKUM 7
-
-Route::get('/perpustakaan', function () {
-    // Data untuk dikirim ke view
-    $nama_sistem = "Sistem Perpustakaan Laravel";
-    $versi = "12.x";
-    $total_buku = 5;
-    
-    $buku_list = [
-        [
-            'judul' => 'Pemrograman PHP',
-            'pengarang' => 'Budi Raharjo',
-            'harga' => 75000,
-            'stok' => 10
-        ],
-        [
-            'judul' => 'Laravel Framework',
-            'pengarang' => 'Andi Nugroho',
-            'harga' => 125000,
-            'stok' => 5
-        ],
-        [
-            'judul' => 'MySQL Database',
-            'pengarang' => 'Siti Aminah',
-            'harga' => 95000,
-            'stok' => 0
-        ],
-        [
-            'judul' => 'Web Design',
-            'pengarang' => 'Dedi Santoso',
-            'harga' => 85000,
-            'stok' => 8
-        ],
-        [
-            'judul' => 'JavaScript Modern',
-            'pengarang' => 'Rina Wijaya',
-            'harga' => 80000,
-            'stok' => 12
-        ]
-    ];
-    
-    // Return view dengan data
-    return view('perpustakaan.index', [
-        'nama_sistem' => $nama_sistem,
-        'versi' => $versi,
-        'total_buku' => $total_buku,
-        'buku_list' => $buku_list
-    ]);
-});
-
-// PRAKTIKUM 8 - Menggunakan Controller
-
-// Route menggunakan Controller
-Route::get('/perpustakaan', [PerpustakaanController::class, 'index']);
-Route::get('/buku/{id}', [PerpustakaanController::class, 'show']);
-Route::get('/about', [PerpustakaanController::class, 'about']);
