@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $nama_sistem }}</title>
 </head>
+
 <body>
- <div class="container mt-5">
+    <div class="container mt-5">
         <h1>{{ $nama_sistem }}</h1>
         <p class="lead">Selamat datang di sistem perpustakaan berbasis Laravel {{ $versi }}</p>
-        
+
         <div class="alert alert-info">
             <strong>Info:</strong> Total buku yang tersedia: {{ $total_buku }}
         </div>
-        
+
         <h3>Daftar Buku</h3>
         <table class="table table-striped">
             <thead>
@@ -34,16 +36,18 @@
                     <td>Rp {{ number_format($buku['harga'], 0, ',', '.') }}</td>
                     <td>
                         @if ($buku['stok'] > 0)
-                            <span class="badge bg-success">{{ $buku['stok'] }}</span>
+                        <span class="badge bg-success">{{ $buku['stok'] }}</span>
                         @else
-                            <span class="badge bg-danger">Habis</span>
+                        <span class="badge bg-danger">Habis</span>
                         @endif
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-    </div></p>
+    </div>
+    </p>
     </div>
 </body>
+
 </html>

@@ -3,6 +3,28 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\Buku;
 use App\Models\Anggota;
+use App\Http\Controllers\BukuController;
+use App\Http\Controllers\DashboardController;
+
+Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
+Route::resource('buku', BukuController::class);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::resource('buku', BukuController::class);
+
+Route::get(
+    'buku/kategori/{kategori}',
+    [BukuController::class, 'filterKategori']
+)->name('buku.kategori');
+
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
+Route::get('anggota', function () {
+    return view('anggota.index');
+})->name('anggota.index');
 
 Route::get('/test-accessor-scope', function () {
 
