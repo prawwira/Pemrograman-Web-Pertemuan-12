@@ -5,6 +5,13 @@ use App\Models\Buku;
 use App\Models\Anggota;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\DashboardController;
+use Illuminate\Http\Request;
+
+Route::get('/buku/export', [BukuController::class, 'export'])
+    ->name('buku.export');
+
+Route::post('/buku/bulk-delete', [BukuController::class, 'bulkDelete'])
+    ->name('buku.bulk-delete');
 
 Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
 Route::resource('buku', BukuController::class);

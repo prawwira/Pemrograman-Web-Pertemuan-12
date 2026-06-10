@@ -1,20 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Buku')
+@section('title', 'Edit Buku')
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-10">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-warning">
                 <h4 class="mb-0">
-                    <i class="bi bi-plus-circle"></i>
-                    Tambah Buku Baru
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Buku: {{ $buku->judul }}
                 </h4>
             </div>
             <div class="card-body">
-                <form action="{{ route('buku.store') }}" method="POST">
+                <form action="{{ route('buku.update', $buku->id) }}" method="POST">
                     @csrf
+                    @method('PUT')
 
                     <div class="row">
                         {{-- Kode Buku --}}
@@ -26,8 +27,7 @@
                                 name="kode_buku"
                                 id="kode_buku"
                                 class="form-control @error('kode_buku') is-invalid @enderror"
-                                value="{{ old('kode_buku') }}"
-                                placeholder="Contoh: BK-001">
+                                value="{{ old('kode_buku', $buku->kode_buku) }}">
                             @error('kode_buku')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -42,8 +42,7 @@
                                 name="judul"
                                 id="judul"
                                 class="form-control @error('judul') is-invalid @enderror"
-                                value="{{ old('judul') }}"
-                                placeholder="Masukkan judul buku">
+                                value="{{ old('judul', $buku->judul) }}">
                             @error('judul')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -60,18 +59,12 @@
                                 id="kategori"
                                 class="form-select @error('kategori') is-invalid @enderror">
                                 <option value="">-- Pilih Kategori --</option>
-                                <option value="Programming" {{ old('kategori') == 'Programming' ? 'selected' : '' }}>
-                                    Programming
+                                @foreach(['Programming', 'Database', 'Web Design', 'Networking'] as $kat)
+                                <option value="{{ $kat }}"
+                                    {{ old('kategori', $buku->kategori) == $kat ? 'selected' : '' }}>
+                                    {{ $kat }}
                                 </option>
-                                <option value="Database" {{ old('kategori') == 'Database' ? 'selected' : '' }}>
-                                    Database
-                                </option>
-                                <option value="Web Design" {{ old('kategori') == 'Web Design' ? 'selected' : '' }}>
-                                    Web Design
-                                </option>
-                                <option value="Networking" {{ old('kategori') == 'Networking' ? 'selected' : '' }}>
-                                    Networking
-                                </option>
+                                @endforeach
                             </select>
                             @error('kategori')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -87,8 +80,7 @@
                                 name="pengarang"
                                 id="pengarang"
                                 class="form-control @error('pengarang') is-invalid @enderror"
-                                value="{{ old('pengarang') }}"
-                                placeholder="Nama pengarang">
+                                value="{{ old('pengarang', $buku->pengarang) }}">
                             @error('pengarang')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -103,8 +95,7 @@
                                 name="penerbit"
                                 id="penerbit"
                                 class="form-control @error('penerbit') is-invalid @enderror"
-                                value="{{ old('penerbit') }}"
-                                placeholder="Nama penerbit">
+                                value="{{ old('penerbit', $buku->penerbit) }}">
                             @error('penerbit')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -121,7 +112,7 @@
                                 name="tahun_terbit"
                                 id="tahun_terbit"
                                 class="form-control @error('tahun_terbit') is-invalid @enderror"
-                                value="{{ old('tahun_terbit', date('Y')) }}"
+                                value="{{ old('tahun_terbit', $buku->tahun_terbit) }}"
                                 min="1900"
                                 max="{{ date('Y') }}">
                             @error('tahun_terbit')
@@ -131,15 +122,12 @@
 
                         {{-- ISBN --}}
                         <div class="col-md-3 mb-3">
-                            <label for="isbn" class="form-label">
-                                ISBN
-                            </label>
+                            <label for="isbn" class="form-label">ISBN</label>
                             <input type="text"
                                 name="isbn"
                                 id="isbn"
                                 class="form-control @error('isbn') is-invalid @enderror"
-                                value="{{ old('isbn') }}"
-                                placeholder="978-xxx-xxx">
+                                value="{{ old('isbn', $buku->isbn) }}">
                             @error('isbn')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -153,10 +141,10 @@
                             <select name="bahasa"
                                 id="bahasa"
                                 class="form-select @error('bahasa') is-invalid @enderror">
-                                <option value="Indonesia" {{ old('bahasa', 'Indonesia') == 'Indonesia' ? 'selected' : '' }}>
+                                <option value="Indonesia" {{ old('bahasa', $buku->bahasa) == 'Indonesia' ? 'selected' : '' }}>
                                     Indonesia
                                 </option>
-                                <option value="Inggris" {{ old('bahasa') == 'Inggris' ? 'selected' : '' }}>
+                                <option value="Inggris" {{ old('bahasa', $buku->bahasa) == 'Inggris' ? 'selected' : '' }}>
                                     Inggris
                                 </option>
                             </select>
@@ -174,7 +162,7 @@
                                 name="harga"
                                 id="harga"
                                 class="form-control @error('harga') is-invalid @enderror"
-                                value="{{ old('harga', 0) }}"
+                                value="{{ old('harga', $buku->harga) }}"
                                 min="0"
                                 step="1000">
                             @error('harga')
@@ -191,7 +179,7 @@
                                 name="stok"
                                 id="stok"
                                 class="form-control @error('stok') is-invalid @enderror"
-                                value="{{ old('stok', 0) }}"
+                                value="{{ old('stok', $buku->stok) }}"
                                 min="0">
                             @error('stok')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -205,8 +193,7 @@
                         <textarea name="deskripsi"
                             id="deskripsi"
                             rows="4"
-                            class="form-control @error('deskripsi') is-invalid @enderror"
-                            placeholder="Deskripsi singkat tentang buku (opsional)">{{ old('deskripsi') }}</textarea>
+                            class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi', $buku->deskripsi) }}</textarea>
                         @error('deskripsi')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -216,26 +203,28 @@
 
                     {{-- Buttons --}}
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('buku.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('buku.show', $buku->id) }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Kembali
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Simpan Buku
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-save"></i> Update Buku
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+
+        {{-- Info Update --}}
+        <div class="card mt-3">
+            <div class="card-body">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Informasi:</strong><br />
+                    - Buku ditambahkan: {{ $buku->created_at->format('d M Y H:i') }}<br />
+                    - Terakhir diupdate: {{ $buku->updated_at->format('d M Y H:i') }}
+                </small>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Auto format harga dengan thousand separator
-    document.getElementById('harga').addEventListener('blur', function() {
-        let value = this.value.replace(/\D/g, '');
-        this.value = value;
-    });
-</script>
-@endpush
